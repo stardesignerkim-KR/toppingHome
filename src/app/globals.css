@@ -1,0 +1,74 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css");
+@import "tailwindcss";
+
+@theme {
+  /* ── 악센트: 버건디 (화면의 5% 이내로만 사용) ── */
+  --color-accent-50:  #FBF3F5;
+  --color-accent-100: #F5E1E6;
+  --color-accent-200: #E8BFC9;
+  --color-accent-400: #B8556B;
+  --color-accent-600: #8B2035;
+  --color-accent-700: #6E1829;
+  --color-accent-900: #3F0D18;
+
+  /* ── 뉴트럴: 웜 그레이 (버건디와 온도를 맞춤) ── */
+  --color-n-0:   #FFFFFF;
+  --color-n-25:  #FAFAF9;
+  --color-n-50:  #F5F5F4;
+  --color-n-100: #EAE9E7;
+  --color-n-200: #D6D3D1;
+  --color-n-400: #A8A29E;
+  --color-n-600: #57534E;
+  --color-n-800: #292524;
+  --color-n-900: #1C1917;
+
+  /* ── 시맨틱 (관리자) ── */
+  --color-success: #166534;
+  --color-warning: #A16207;
+  --color-danger:  #B91C1C;
+
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    system-ui, "Segoe UI", "Malgun Gothic", sans-serif;
+
+  --breakpoint-3xl: 1600px;
+}
+
+:root {
+  --shell: 1280px;
+  --prose: 720px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-n-25);
+  color: var(--color-n-800);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+/* 숫자 정렬 */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* 포커스 링은 절대 지우지 않는다 (업무시스템 사용자는 키보드 비중이 높음) */
+:focus-visible {
+  outline: 2px solid var(--color-accent-400);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* 참고자료 모달 */
+dialog::backdrop {
+  background: rgb(28 25 23 / 0.5);
+}
+dialog {
+  border: none;
+  padding: 0;
+  background: transparent;
+}
