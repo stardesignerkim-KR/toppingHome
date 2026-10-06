@@ -1,32 +1,46 @@
 import type { Metadata } from "next";
-import Container from "@/components/Container";
+import PageHero from "@/components/PageHero";
 import Section from "@/components/Section";
 import CTASection from "@/components/CTASection";
-import { SOLUTIONS, X_CONVERTING_STEPS, EASY_GUIDE } from "@/content/solutions";
+import MockupFrame from "@/components/mockup/MockupFrame";
+import { XConvertingMock } from "@/components/mockup";
 
-export const metadata: Metadata = {
-  title: "UIUX Solution 지원",
-  description:
-    "넥사크로 · WebSquare5 · Xframe · MIP 마이플랫폼 기획·디자인·퍼블리싱 지원. X-Converting UI 고도화.",
-};
+import { getSolutions, getPageHeader, getList, getPageMeta } from "@/lib/content";
 
-export default function SolutionPage() {
+export const dynamic = "force-dynamic";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const m = await getPageMeta("solution", {
+    title: "UIUX Solution 지원",
+    description: "넥사크로 · WebSquare5 · Xframe · MIP 마이플랫폼 기획·디자인·퍼블리싱 지원. X-Converting UI 고도화.",
+  });
+  return {
+    title: m.title,
+    description: m.description,
+    openGraph: m.ogImage ? { images: [m.ogImage] } : undefined,
+  };
+}
+
+export default async function SolutionPage() {
+  const [solutions, xSteps, header, easyGuide] = await Promise.all([
+    getSolutions(),
+    getList("x_steps"),
+    getPageHeader("solution", {
+      title: "국내 UI 솔루션의 기획 · 디자인 · 퍼블리싱",
+      subtitle:
+        "넥사크로, WebSquare5, Xframe, MIP 마이플랫폼. 개발회사와의 파트너십을 통해 공통개발도 지원합니다.",
+    }),
+    getList("easy_guide"),
+  ]);
+
   return (
     <>
-      <section className="border-b border-n-100 bg-n-0 py-16 md:py-24">
-        <Container>
-          <p className="text-[13px] font-medium tracking-wide text-accent-600 uppercase">
-            Solution
-          </p>
-          <h1 className="mt-3 text-[30px] leading-tight font-bold text-n-900 md:text-[44px]">
-            국내 UI 솔루션의 기획 · 디자인 · 퍼블리싱
-          </h1>
-          <p className="mt-5 max-w-[720px] text-lg text-n-600">
-            넥사크로, WebSquare5, Xframe, MIP 마이플랫폼. 개발회사와의 파트너십을 통해
-            공통개발도 지원합니다.
-          </p>
-        </Container>
-      </section>
+      <PageHero
+        eyebrow="Solution"
+        pageId="solution"
+        header={header}
+        aside={[{ label: "NEXACRO" }, { label: "X-CONVERTING", active: true }, { label: "WEBSQUARE" }, { label: "XFRAME · MIP" }]}
+      />
 
       <Section eyebrow="Process" title="X-Converting UI 고도화">
         <div className="max-w-[720px] text-n-800">
@@ -36,13 +50,22 @@ export default function SolutionPage() {
             모두 줄일 수 있습니다.
           </p>
         </div>
+        <div className="mt-8">
+          <MockupFrame
+            ratio="8/5"
+            caption="같은 업무, 같은 데이터. 클릭 타겟과 정보 위계만 바꿔도 처리 속도가 달라집니다."
+          >
+            <XConvertingMock />
+          </MockupFrame>
+        </div>
+
         <ol className="mt-8 grid gap-px overflow-hidden rounded-lg border border-n-100 bg-n-100 sm:grid-cols-2 lg:grid-cols-4">
-          {X_CONVERTING_STEPS.map((s, i) => (
-            <li key={s} className="bg-n-0 px-5 py-4">
+          {xSteps.map((s, i) => (
+            <li key={s.f1} className="bg-n-0 px-5 py-4">
               <span className="tnum text-sm text-accent-600">
                 {String(i + 1).padStart(2, "0")}
               </span>
-              <p className="mt-1 text-[15px] text-n-800">{s}</p>
+              <p className="mt-1 text-[15px] text-n-800">{s.f1}</p>
             </li>
           ))}
         </ol>
@@ -50,7 +73,7 @@ export default function SolutionPage() {
 
       <Section eyebrow="Solutions" title="지원 솔루션" alt>
         <div className="grid gap-6 md:grid-cols-2">
-          {SOLUTIONS.map((s) => (
+          {solutions.map((s) => (
             <article
               key={s.id}
               className="rounded-lg border border-n-100 bg-n-0 p-6"
@@ -69,12 +92,12 @@ export default function SolutionPage() {
             수 있도록 친근한 가이드를 지원합니다.
           </p>
           <ul className="mt-6 grid gap-3 sm:grid-cols-2">
-            {EASY_GUIDE.map((g) => (
+            {easyGuide.map((g) => (
               <li
-                key={g}
+                key={g.f1}
                 className="rounded-md border border-n-100 bg-n-0 px-4 py-3 text-[15px]"
               >
-                {g}
+                {g.f1}
               </li>
             ))}
           </ul>

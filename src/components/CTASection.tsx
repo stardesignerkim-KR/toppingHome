@@ -1,8 +1,9 @@
 import Link from "next/link";
 import Container from "./Container";
-import { SITE } from "@/content/site";
+import { getSiteCopy } from "@/lib/site-content";
 
-export default function CTASection() {
+export default async function CTASection() {
+  const copy = await getSiteCopy();
   return (
     <section className="border-t border-n-100 bg-n-0 py-16 md:py-20">
       <Container className="text-center">
@@ -21,10 +22,10 @@ export default function CTASection() {
             문의하기
           </Link>
           <a
-            href={`tel:${SITE.tel.replace(/-/g, "")}`}
+            href={`tel:${copy.tel.replace(/-/g, "")}`}
             className="tnum rounded-md border border-n-200 px-6 py-3 font-medium text-n-800 transition-colors hover:border-n-400"
           >
-            {SITE.tel}
+            {copy.tel}
           </a>
         </div>
       </Container>

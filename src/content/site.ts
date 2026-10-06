@@ -1,7 +1,8 @@
 export const SITE = {
   name: "주식회사 토핑인터랙티브",
   shortName: "TOPPING",
-  url: "https://topping.example.com", // TODO: 도메인 확정 후 교체
+  // 배포 환경에서는 Vercel 환경변수 NEXT_PUBLIC_SITE_URL 로 덮어쓴다
+  url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
   description: "AI 업무지원시스템 UIUX. 업무시스템 UIUX 15년, 공공·금융 3개 기관 구축.",
   founded: "2010년 4월",
   ceo: "김원근",

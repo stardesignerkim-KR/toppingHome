@@ -1,48 +1,71 @@
 import type { Metadata } from "next";
-import Container from "@/components/Container";
+import PageHero from "@/components/PageHero";
 import Section from "@/components/Section";
 import Modal from "@/components/Modal";
 import CTASection from "@/components/CTASection";
-import { COGNITIVE_LAWS, UIUX_FLOW, UI_STANDARD_TOC } from "@/content/methodology";
+import LawFigure, { LAW_ORDER, type LawId } from "@/components/figures/LawFigure";
 
-export const metadata: Metadata = {
-  title: "UIUX Service",
-  description:
-    "업무시스템·AI 솔루션 UIUX 표준기획. 인지심리학 기반 업무 표준 UIUX와 UI 표준 정의서.",
-};
+import { getPageHeader, getList, getPageMeta } from "@/lib/content";
 
-export default function ServicePage() {
+export const dynamic = "force-dynamic";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const m = await getPageMeta("service", {
+    title: "UIUX Service",
+    description: "업무시스템·AI 솔루션 UIUX 표준기획. 인지심리학 기반 업무 표준 UIUX와 UI 표준 정의서.",
+  });
+  return {
+    title: m.title,
+    description: m.description,
+    openGraph: m.ogImage ? { images: [m.ogImage] } : undefined,
+  };
+}
+
+export default async function ServicePage() {
+  const [header, laws, flow, toc] = await Promise.all([
+    getPageHeader("service", {
+      title: "한 우물만 팝니다",
+      subtitle:
+        "AI · 업무시스템 · 솔루션 UIUX. 국내 최다의 업무시스템 구축 경험에서 나온 표준을 제공합니다.",
+    }),
+    getList("cognitive_laws"),
+    getList("uiux_flow"),
+    getList("standard_toc"),
+  ]);
+
   return (
     <>
-      <section className="border-b border-n-100 bg-n-0 py-16 md:py-24">
-        <Container>
-          <p className="text-[13px] font-medium tracking-wide text-accent-600 uppercase">
-            Service
-          </p>
-          <h1 className="mt-3 text-[30px] leading-tight font-bold text-n-900 md:text-[44px]">
-            한 우물만 팝니다
-          </h1>
-          <p className="mt-5 max-w-[720px] text-lg text-n-600">
-            AI · 업무시스템 · 솔루션 UIUX. 국내 최다의 업무시스템 구축 경험에서 나온 표준을
-            제공합니다.
-          </p>
-        </Container>
-      </section>
+      <PageHero
+        eyebrow="Service"
+        pageId="service"
+        header={header}
+        aside={[{ label: "인지심리학 UIUX", active: true }, { label: "UIUX FLOW 37단계" }, { label: "UI 표준 정의서" }]}
+      />
 
       <Section
         eyebrow="Cognitive Psychology"
         title="업무표준 인지심리학 UIUX"
         lead="인지심리학을 적용해 사용성을 끌어올린 업무 표준 UIUX를 제공합니다."
       >
-        <ol className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
-          {COGNITIVE_LAWS.map((l, i) => (
-            <li key={l.name} className="flex gap-4 border-b border-n-100 pb-4">
-              <span className="tnum w-6 shrink-0 text-sm text-accent-600">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <div>
-                <p className="font-medium text-n-900">{l.name}</p>
-                <p className="text-sm text-n-600">{l.desc}</p>
+        <ol className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {laws.map((l, i) => (
+            <li
+              key={l.f1}
+              className="overflow-hidden rounded-lg border border-n-100 bg-n-0 transition-colors hover:border-n-200"
+              data-reveal
+              style={{ "--d": `${(i % 3) * 70}ms` } as React.CSSProperties}
+            >
+              <div className="border-b border-n-100 bg-n-25 p-4">
+                <LawFigure id={(l.f3 as LawId) || LAW_ORDER[i % LAW_ORDER.length]} delay={(i % 3) * 70} />
+              </div>
+              <div className="flex gap-3 p-5">
+                <span className="tnum shrink-0 text-sm text-accent-600">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <div>
+                  <p className="font-medium text-n-900">{l.f1}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-n-600">{l.f2}</p>
+                </div>
               </div>
             </li>
           ))}
@@ -59,10 +82,10 @@ export default function ServicePage() {
           <div className="mt-6">
             <Modal label="전체 프로세스 보기" title="Topping UIUX FLOW">
               <ol className="grid gap-x-8 gap-y-2 sm:grid-cols-2">
-                {UIUX_FLOW.map((s, i) => (
-                  <li key={s} className="flex gap-3">
+                {flow.map((f, i) => (
+                  <li key={f.f1} className="flex gap-3">
                     <span className="tnum w-6 shrink-0 text-n-400">{i + 1}</span>
-                    <span>{s}</span>
+                    <span>{f.f1}</span>
                   </li>
                 ))}
               </ol>
@@ -79,11 +102,11 @@ export default function ServicePage() {
           <div className="mt-6">
             <Modal label="정의서 목차 보기" title="UI 표준 정의서 목차">
               <div className="space-y-6">
-                {UI_STANDARD_TOC.map((ch) => (
-                  <div key={ch.no}>
+                {toc.map((ch) => (
+                  <div key={ch.f1}>
                     <p className="font-semibold text-n-900">
-                      <span className="tnum mr-2 text-accent-600">{ch.no}</span>
-                      {ch.title}
+                      <span className="tnum mr-2 text-accent-600">{ch.f1}</span>
+                      {ch.f2}
                     </p>
                     <ul className="mt-2 space-y-1 pl-6 text-[15px] text-n-600">
                       {ch.items.map((it) => (

@@ -22,6 +22,21 @@
   --color-n-800: #292524;
   --color-n-900: #1C1917;
 
+  /* ── 일러스트 전용 파스텔 (2026-09 추가) ──
+     ⚠️ 버튼·링크·활성 상태에는 절대 쓰지 않는다. 그림 안에서만 쓴다.
+        인터랙션 색은 여전히 버건디 하나다. */
+  --color-fig-sand-100: #FBEADA;
+  --color-fig-sand-300: #F0C79E;
+  --color-fig-sand-600: #C9813C;
+
+  --color-fig-teal-100: #DDEDEA;
+  --color-fig-teal-300: #A6CFC8;
+  --color-fig-teal-600: #3F7F76;
+
+  --color-fig-iris-100: #E4E5F2;
+  --color-fig-iris-300: #B3B7DB;
+  --color-fig-iris-600: #5A62A0;
+
   /* ── 시맨틱 (관리자) ── */
   --color-success: #166534;
   --color-warning: #A16207;
@@ -71,4 +86,577 @@ dialog {
   border: none;
   padding: 0;
   background: transparent;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   모션
+   원칙 1. 움직임은 장식이 아니라 내용을 설명해야 한다
+   원칙 2. JS 가 죽어도 내용은 보인다 (data-armed 를 붙인 뒤에만 숨긴다)
+   원칙 3. prefers-reduced-motion 이면 전부 끈다 (맨 아래)
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.66, 0, 0.34, 1);
+}
+
+/* ── 스크롤 등장 ───────────────────────────────── */
+
+[data-reveal][data-armed] {
+  opacity: 0;
+  transform: translateY(14px);
+  /* 짧게 끝낸다. 빠르게 스크롤하는 사람이 빈 화면을 만나면 안 된다 */
+  transition:
+    opacity 0.5s var(--ease-out),
+    transform 0.6s var(--ease-out);
+  transition-delay: var(--d, 0ms);
+}
+[data-reveal][data-armed].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* 단어 단위 — 제목이 아래에서 차례로 올라온다 */
+[data-reveal="words"][data-armed] {
+  opacity: 1;
+  transform: none;
+}
+.rv-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+.rv-word-in {
+  display: inline-block;
+  transform: translateY(110%);
+  transition: transform 0.75s var(--ease-out);
+  transition-delay: calc(var(--d, 0ms) + var(--i, 0) * 55ms);
+}
+[data-reveal="words"].is-in .rv-word-in {
+  transform: none;
+}
+
+/* ── 오로라 배경 ───────────────────────────────────
+   WebGL 없이 흐르는 그라데이션. blur 한 원 세 개를 천천히 움직인다. */
+
+.aurora__blob {
+  position: absolute;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  filter: blur(64px);
+  will-change: transform;
+}
+.aurora__blob--1 {
+  width: 44%;
+  left: 48%;
+  top: -26%;
+  background: radial-gradient(circle, #f5e1e6 0%, rgb(245 225 230 / 0) 68%);
+  animation: aurora-1 26s var(--ease-soft) infinite alternate;
+}
+.aurora__blob--2 {
+  width: 38%;
+  left: 72%;
+  top: 22%;
+  background: radial-gradient(circle, #fbf3f5 0%, rgb(251 243 245 / 0) 70%);
+  animation: aurora-2 32s var(--ease-soft) infinite alternate;
+}
+.aurora__blob--3 {
+  width: 34%;
+  left: 60%;
+  top: 46%;
+  background: radial-gradient(circle, #eae9e7 0%, rgb(234 233 231 / 0) 72%);
+  animation: aurora-3 38s var(--ease-soft) infinite alternate;
+}
+@keyframes aurora-1 {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(-14%, 12%, 0) scale(1.18); }
+}
+@keyframes aurora-2 {
+  from { transform: translate3d(0, 0, 0) scale(1.1); }
+  to   { transform: translate3d(-22%, -16%, 0) scale(0.92); }
+}
+@keyframes aurora-3 {
+  from { transform: translate3d(0, 0, 0) scale(0.95); }
+  to   { transform: translate3d(10%, -20%, 0) scale(1.22); }
+}
+
+/* ── 헤더 무늬 애니메이션 ──────────────────────────
+   SVG 변형은 transform-box: fill-box 가 있어야 요소 자기 기준으로 돈다. */
+
+.hp-anim [class^="hp-"] {
+  transform-box: fill-box;
+}
+
+/* 막대가 바닥에서 자란다 — 실적이 쌓였다는 뜻 */
+.hp-grow {
+  transform-origin: bottom;
+  animation: hp-grow 0.9s var(--ease-out) both;
+  animation-delay: calc(120ms + var(--i, 0) * 70ms);
+}
+@keyframes hp-grow {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+/* 선이 허브 쪽으로 흐른다 — AI 가 업무로 모인다는 뜻 */
+.hp-flow {
+  stroke-dasharray: 6 10;
+  animation: hp-flow 2.4s linear infinite;
+  animation-delay: calc(var(--i, 0) * -180ms);
+}
+@keyframes hp-flow {
+  to { stroke-dashoffset: -32; }
+}
+
+/* 노드가 천천히 숨 쉰다 */
+.hp-node {
+  transform-origin: center;
+  animation: hp-node 4s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * -320ms);
+}
+@keyframes hp-node {
+  0%, 100% { transform: scale(1);    opacity: 1; }
+  50%      { transform: scale(1.22); opacity: 0.72; }
+}
+
+/* 동심원이 퍼진다 — 한 우물이 깊어진다는 뜻 */
+.hp-ring {
+  transform-origin: center;
+  animation: hp-ring 6s ease-out infinite;
+  animation-delay: calc(var(--i, 0) * -900ms);
+}
+@keyframes hp-ring {
+  0%   { transform: scale(0.82); opacity: 0; }
+  18%  { opacity: 1; }
+  100% { transform: scale(1.06); opacity: 0; }
+}
+
+/* 지층이 왼쪽에서 차례로 쌓인다 */
+.hp-band {
+  transform-origin: right;
+  animation: hp-band 0.8s var(--ease-out) both;
+  animation-delay: calc(160ms + var(--i, 0) * 55ms);
+}
+@keyframes hp-band {
+  from { transform: scaleX(0); opacity: 0; }
+  to   { transform: scaleX(1); opacity: 1; }
+}
+
+/* 변환 화살표가 오른쪽으로 민다 */
+.hp-push {
+  animation: hp-push 2.6s ease-in-out infinite;
+}
+@keyframes hp-push {
+  0%, 100% { transform: translateX(0); }
+  50%      { transform: translateX(5px); }
+}
+
+/* 도트가 잔잔히 깜빡인다 */
+.hp-twinkle {
+  animation: hp-twinkle 5s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * -130ms);
+}
+@keyframes hp-twinkle {
+  0%, 100% { opacity: 0.35; }
+  50%      { opacity: 1; }
+}
+
+/* 그물망이 아주 천천히 떠다닌다 */
+.hp-drift {
+  animation: hp-drift 18s ease-in-out infinite alternate;
+}
+@keyframes hp-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-10px, 8px, 0); }
+}
+
+/* ── 모션 최소화 설정 존중 ─────────────────────────
+   업무시스템 사용자 중에는 이 설정을 켜 둔 사람이 있다. 전부 끈다. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  [data-reveal][data-armed],
+  [data-reveal][data-armed] .rv-word-in {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .aurora {
+    display: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   인지심리학 10법칙 미니 다이어그램 (`components/figures/LawFigure`)
+   escolhadigital 이 쓰던 방식 — transform/opacity 만 겹쳐 쌓는다.
+   그림이 화면에 들어올 때 `[data-reveal]` 부모가 .is-in 을 받으면 돈다.
+   ═══════════════════════════════════════════════════════════ */
+
+.fig [class^="fig-"] {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* 01 제이콥 — 같은 배치가 차례로 들어선다 */
+.fig-fade {
+  animation: fig-fade 0.7s var(--ease-out) both;
+  animation-delay: calc(var(--fd, 0ms) + var(--i, 0) * 140ms);
+}
+@keyframes fig-fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* 02 피츠 — 커서가 큰 타겟과 작은 타겟을 오간다 */
+.fig-travel {
+  animation: fig-travel 4.2s cubic-bezier(0.5, 0, 0.2, 1) infinite;
+}
+@keyframes fig-travel {
+  0%, 8%    { transform: translate(28px, 46px); }
+  26%, 46%  { transform: translate(122px, 44px); }
+  64%, 100% { transform: translate(28px, 46px); }
+}
+
+/* 03 힉 — 아래쪽 선택지가 걷힌다 */
+.fig-cull {
+  animation: fig-cull 4s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * -120ms);
+}
+@keyframes fig-cull {
+  0%, 35%   { opacity: 1; transform: none; }
+  55%, 85%  { opacity: 0.12; transform: translateX(-6px); }
+  100%      { opacity: 1; transform: none; }
+}
+.fig-cull:nth-child(-n + 3) {
+  animation: none;
+  opacity: 1;
+}
+
+/* 04 밀러 — 일곱 개가 톡톡 자리잡는다 */
+.fig-pop {
+  animation: fig-pop 0.5s var(--ease-out) both;
+  animation-delay: calc(var(--fd, 0ms) + var(--i, 0) * 90ms);
+}
+@keyframes fig-pop {
+  from { opacity: 0; transform: scale(0.3); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* 05 포스텔 — 제각각인 입력이 하나로 모인다 */
+.fig-converge {
+  animation: fig-converge 4.4s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * 200ms);
+}
+@keyframes fig-converge {
+  0%, 30%  { opacity: 1; transform: none; }
+  52%, 74% { opacity: 0.35; transform: translate(16px, 0) scale(0.94); }
+  100%     { opacity: 1; transform: none; }
+}
+
+/* 06 피크엔드 — 두 점이 번갈아 뛴다 */
+.fig-beat {
+  animation: fig-beat 2.6s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * 900ms);
+}
+@keyframes fig-beat {
+  0%, 100% { transform: scale(1);   opacity: 1; }
+  50%      { transform: scale(1.5); opacity: 0.6; }
+}
+
+/* 07 심미적 사용성 — 정돈된 쪽에 빛이 스친다 */
+.fig-sheen {
+  animation: fig-sheen 3.6s ease-in-out infinite;
+}
+@keyframes fig-sheen {
+  0%, 100% { opacity: 0; }
+  50%      { opacity: 0.55; }
+}
+
+/* 08 폰 레스토프 — 하나만 계속 존재를 알린다 */
+.fig-standout {
+  animation: fig-standout 2.4s ease-in-out infinite;
+}
+@keyframes fig-standout {
+  0%, 100% { transform: scale(1);    filter: none; }
+  50%      { transform: scale(1.18); filter: drop-shadow(0 0 5px rgb(139 32 53 / 0.45)); }
+}
+
+/* 09 테슬러 — 복잡함이 사용자에서 시스템으로 옮겨간다 */
+.fig-shift {
+  animation: fig-shift 4.6s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * 130ms);
+}
+@keyframes fig-shift {
+  0%, 18%  { transform: translateX(0); }
+  50%, 72% { transform: translateX(82px); }
+  100%     { transform: translateX(0); }
+}
+
+/* 10 도허티 — 400ms 안에 찬다 */
+.fig-fill {
+  transform-origin: left center;
+  animation: fig-fill 3.4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+@keyframes fig-fill {
+  0%       { transform: scaleX(0); }
+  22%, 76% { transform: scaleX(0.74); }
+  92%, 100% { transform: scaleX(0); }
+}
+
+/* ── 서비스 헤더: 겹쳐 쌓은 움직임 ─────────────────
+   escolhadigital 의 auraPulse / orbit 방식. 한 그림에 여러 겹이 동시에 돈다. */
+.hp-aura {
+  transform-origin: center;
+  animation: hp-aura 5s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * -1600ms);
+}
+@keyframes hp-aura {
+  0%, 100% { opacity: 0.45; transform: scale(1); }
+  50%      { opacity: 0.9;  transform: scale(1.35); }
+}
+
+.hp-anim .hp-orbit {
+  /* ⚠️ 위쪽 `.hp-anim [class^="hp-"]` 이 fill-box 를 걸어 둔다. 그 규칙과
+     같은 특이도로는 못 이기므로 `.hp-anim` 을 붙여 올린다.
+     궤도는 viewBox 좌표(1060 180)를 중심으로 돌아야 한다 —
+     fill-box 로 두면 자기 bbox 기준이 돼서 점들이 화면 밖으로 튕겨 나간다. */
+  transform-box: view-box;
+}
+.hp-orbit {
+  animation: hp-orbit 26s linear infinite;
+}
+.hp-orbit--slow {
+  animation-duration: 44s;
+  animation-direction: reverse;
+}
+@keyframes hp-orbit {
+  to { transform: rotate(360deg); }
+}
+
+.hp-core {
+  transform-origin: center;
+  animation: hp-core 2.8s ease-in-out infinite;
+}
+@keyframes hp-core {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.16); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   전면 어두운 헤더 (Magnific 참고) — `components/PageHero`
+   기존 헤더는 7개 페이지 평균 명도가 94.6~97.3%(폭 2.7%p)라
+   한눈에 구별되지 않았다. 명도를 벌리는 것이 가장 큰 지렛대다.
+   ═══════════════════════════════════════════════════════════ */
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 60vh;
+  display: flex;
+  align-items: flex-end;
+  padding-block: 7rem 4rem;
+  background: var(--hero-base, #1c1917);
+  color: #fff;
+
+  /* 무늬는 어두운 테마를 받는다 */
+  --hp-node: rgb(255 255 255 / 0.07);
+  --hp-fill: rgb(255 255 255 / 0.09);
+  --hp-line: rgb(255 255 255 / 0.17);
+  --hp-line-strong: rgb(255 255 255 / 0.34);
+  --hp-wash: rgb(255 255 255 / 0.06);
+  --hp-accent: var(--hero-pop, #e8899c);
+  --hp-accent-soft: rgb(255 255 255 / 0.28);
+  --hp-aura: rgb(255 255 255 / 0.05);
+  /* 어두운 헤더에서는 무늬가 배경 그 자체다. 더 넓게 편다 */
+  --hp-mask-a: 6%;
+  --hp-mask-b: 40%;
+}
+@media (min-width: 768px) {
+  .hero { min-height: 68vh; padding-block: 9rem 5rem; }
+}
+
+/* ── 페이지별 색 그레이딩 — 여기가 "달라 보이게" 만드는 핵심 ── */
+.hero-grade--home    { --hero-base: #1f1013; --hero-a: #8b2035; --hero-b: #3f0d18; --hero-pop: #f0a8b6; }
+.hero-grade--ai      { --hero-base: #12142a; --hero-a: #5a62a0; --hero-b: #8b2035; --hero-pop: #b3b7db; }
+.hero-grade--work    { --hero-base: #1c1917; --hero-a: #c9813c; --hero-b: #6e1829; --hero-pop: #f0c79e; }
+.hero-grade--service { --hero-base: #0d1f1d; --hero-a: #3f7f76; --hero-b: #8b2035; --hero-pop: #a6cfc8; }
+.hero-grade--solution{ --hero-base: #14191c; --hero-a: #5a62a0; --hero-b: #3f7f76; --hero-pop: #cbd5e1; }
+.hero-grade--about   { --hero-base: #231710; --hero-a: #c9813c; --hero-b: #8b2035; --hero-pop: #f0c79e; }
+.hero-grade--contact { --hero-base: #1d0f16; --hero-a: #8b2035; --hero-b: #5a62a0; --hero-pop: #f0a8b6; }
+
+/* ── 큰 번짐 두 덩이 ── */
+.hero__blob {
+  position: absolute;
+  z-index: -3;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+}
+.hero__blob--a {
+  width: 60%;
+  right: -8%;
+  top: -30%;
+  background: radial-gradient(circle, var(--hero-a) 0%, transparent 68%);
+  opacity: 0.55;
+  animation: hero-drift-a 30s var(--ease-soft) infinite alternate;
+}
+.hero__blob--b {
+  width: 46%;
+  right: 22%;
+  bottom: -28%;
+  background: radial-gradient(circle, var(--hero-b) 0%, transparent 70%);
+  opacity: 0.5;
+  animation: hero-drift-b 38s var(--ease-soft) infinite alternate;
+}
+@keyframes hero-drift-a {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(-12%, 14%, 0) scale(1.2); }
+}
+@keyframes hero-drift-b {
+  from { transform: translate3d(0, 0, 0) scale(1.1); }
+  to   { transform: translate3d(14%, -12%, 0) scale(0.9); }
+}
+
+/* ── 그레인 — 평평한 그라데이션에 깊이를 준다 ── */
+.hero__grain {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  opacity: 0.16;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ── 왼쪽 스크림 — 글자가 무늬를 이기게 한다 ── */
+.hero__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(100deg, var(--hero-base) 6%, rgb(0 0 0 / 0.55) 42%, transparent 78%),
+    linear-gradient(to top, rgb(0 0 0 / 0.5), transparent 46%);
+}
+
+/* ── 사진을 올렸을 때: 흑백 → 브랜드 색 듀오톤 ── */
+.hero__photo {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  background-size: cover;
+  background-position: center;
+  filter: grayscale(1) contrast(1.08) brightness(0.72);
+}
+.hero__duotone {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: var(--hero-a);
+  mix-blend-mode: color;
+  opacity: 0.85;
+}
+
+/* ── 배치 — 왼쪽 글, 오른쪽 세로 목록 ── */
+.hero__inner {
+  position: relative;
+  display: grid;
+  gap: 2.5rem;
+  align-items: end;
+}
+@media (min-width: 1024px) {
+  .hero__inner { grid-template-columns: minmax(0, 1fr) auto; }
+}
+.hero__eyebrow {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--hero-pop);
+}
+.hero__title {
+  margin-top: 1rem;
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: #fff;
+  text-wrap: balance;
+}
+.hero__sub {
+  margin-top: 1.5rem;
+  max-width: 46ch;
+  color: rgb(255 255 255 / 0.72);
+}
+
+.hero__aside {
+  display: none;
+  text-align: right;
+}
+@media (min-width: 1024px) {
+  .hero__aside { display: block; }
+}
+.hero__aside li {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
+  color: rgb(255 255 255 / 0.22);
+  transition: color 0.4s var(--ease-out);
+}
+.hero__aside li.is-active {
+  color: #fff;
+}
+.hero__aside li.is-active::before {
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-right: 0.6rem;
+  vertical-align: 0.12em;
+  border-left: 8px solid var(--hero-pop);
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__blob { animation: none; }
+}
+
+/* ── 내비게이션: 어두운 히어로 위에서는 투명하게 얹힌다 ──
+   `data-solid` 는 스크롤(또는 모바일 메뉴 열림) 상태에서 붙는다. */
+.site-header__brand { color: #fff; }
+.site-header__link { color: rgb(255 255 255 / 0.72); }
+.site-header__link:hover { color: #fff; }
+.site-header__bar { background: #fff; }
+
+.site-header[data-solid] .site-header__brand { color: var(--color-n-900); }
+.site-header[data-solid] .site-header__link { color: var(--color-n-600); }
+.site-header[data-solid] .site-header__link:hover { color: var(--color-n-900); }
+.site-header[data-solid] .site-header__bar { background: var(--color-n-800); }
+
+/* 히어로가 내비 아래로 들어가므로 위쪽 여백을 내비 높이만큼 더 준다 */
+.hero { margin-top: -4rem; padding-top: 11rem; }
+@media (min-width: 768px) {
+  .hero { padding-top: 13rem; }
+}
+
+/* 오른쪽 목록이 밝은 무늬 위에 얹히면 안 읽힌다. 글자 뒤에 그림자를 깐다. */
+.hero__aside li {
+  text-shadow:
+    0 1px 2px rgb(0 0 0 / 0.65),
+    0 2px 14px rgb(0 0 0 / 0.55);
+}
+.hero__aside li.is-active {
+  text-shadow:
+    0 1px 2px rgb(0 0 0 / 0.8),
+    0 2px 18px rgb(0 0 0 / 0.7);
 }

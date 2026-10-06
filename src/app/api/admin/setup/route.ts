@@ -76,8 +76,35 @@ create table if not exists page_headers (
   title_text_color text default '#000000',
   subtitle_font_size int default 16,
   subtitle_text_color text default '#666666',
+  seo_title text,
+  seo_description text,
+  og_image_url text,
   updated_at timestamp default now()
 );
+
+-- 이미 만들어진 DB 에도 SEO 칸을 더한다
+alter table page_headers add column if not exists seo_title text;
+alter table page_headers add column if not exists seo_description text;
+alter table page_headers add column if not exists og_image_url text;
+
+-- 로고·썸네일의 대체텍스트(비우면 이름이 자동으로 쓰인다)
+alter table clients add column if not exists logo_alt text;
+alter table ai_projects add column if not exists thumbnail_alt text;
+
+
+-- 10. 목록형 콘텐츠 (숫자 타일, 서비스 분야, 메뉴, 인지심리학, FLOW, 표준 목차,
+--     AI 역량, X-Converting 단계, EASY GUIDE 를 한 테이블에 모은다)
+create table if not exists content_lists (
+  id bigint primary key generated always as identity,
+  list_key text not null,
+  sort int not null default 0,
+  f1 text,
+  f2 text,
+  f3 text,
+  items text[] default '{}',
+  updated_at timestamp default now()
+);
+create index if not exists content_lists_key_sort on content_lists (list_key, sort);
 
 -- 9. 텍스트 스타일
 create table if not exists text_styles (
@@ -117,6 +144,11 @@ values
   ('iRAG 데이터 표시', '근거 데이터 노출 방식', 10)
 on conflict do nothing;
 `;
+
+/** GET — 설치 SQL 만 돌려준다. 아무것도 쓰지 않는다(대시보드의 『설치 SQL 보기』). */
+export async function GET() {
+  return NextResponse.json({ sql: setupSQL });
+}
 
 export async function POST() {
   try {

@@ -22,15 +22,37 @@ export default function Section({
     >
       <Container>
         {eyebrow && (
-          <p className="mb-3 text-[13px] font-medium tracking-wide text-accent-600 uppercase">
+          <p
+            className="mb-3 text-[13px] font-medium tracking-wide text-accent-600 uppercase"
+            data-reveal
+          >
             {eyebrow}
           </p>
         )}
         {title && (
-          <h2 className="text-2xl font-semibold text-n-900 md:text-[28px]">{title}</h2>
+          <h2
+            className="text-2xl font-semibold text-n-900 md:text-[28px]"
+            data-reveal="words"
+          >
+            {title}
+          </h2>
         )}
-        {lead && <p className="mt-3 max-w-[720px] text-n-600">{lead}</p>}
-        {children && <div className="mt-10">{children}</div>}
+        {lead && (
+          <p
+            className="mt-3 max-w-[720px] text-n-600"
+            data-reveal
+            style={{ "--d": "60ms" } as React.CSSProperties}
+          >
+            {lead}
+          </p>
+        )}
+        {/* 본문 블록은 지연을 두지 않는다 — 카드 여러 장이 한꺼번에
+            비어 있으면 스크롤 도중 빈 화면처럼 보인다 */}
+        {children && (
+          <div className="mt-10" data-reveal>
+            {children}
+          </div>
+        )}
       </Container>
     </section>
   );

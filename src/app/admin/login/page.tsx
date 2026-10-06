@@ -27,6 +27,8 @@ export default function LoginPage() {
         return;
       }
 
+      // 세션 쿠키가 방금 생겼으므로 서버 컴포넌트/미들웨어가 다시 읽도록 갱신
+      router.refresh();
       router.push("/admin");
     } catch (err) {
       setError("로그인 중 오류가 발생했습니다.");

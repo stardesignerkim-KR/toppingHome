@@ -1,7 +1,7 @@
 "use client";
 
 import { supabase } from "@/lib/supabase";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 
@@ -11,7 +11,11 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
+
+  // 로그인 전 화면에는 관리자 사이드바를 씌우지 않는다
+  const isAuthPage = pathname === "/admin/login" || pathname === "/admin/signup";
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -23,6 +27,8 @@ export default function AdminLayout({
     await supabase.auth.signOut();
     router.push("/admin/login");
   };
+
+  if (isAuthPage) return <>{children}</>;
 
   return (
     <div className="flex h-screen bg-n-0">
@@ -68,10 +74,28 @@ export default function AdminLayout({
               솔루션
             </a>
             <a
+              href="/admin/lists"
+              className="block rounded px-4 py-2 hover:bg-n-100"
+            >
+              목록 관리
+            </a>
+            <a
               href="/admin/media"
               className="block rounded px-4 py-2 hover:bg-n-100"
             >
               이미지
+            </a>
+            <a
+              href="/admin/seo"
+              className="block rounded px-4 py-2 hover:bg-n-100"
+            >
+              검색엔진
+            </a>
+            <a
+              href="/admin/inquiries"
+              className="mt-4 block rounded px-4 py-2 font-medium hover:bg-n-100"
+            >
+              문의 접수함
             </a>
           </nav>
         </div>
