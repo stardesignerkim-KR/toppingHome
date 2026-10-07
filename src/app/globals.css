@@ -475,9 +475,8 @@ dialog {
   --hp-accent: var(--hero-pop, #e8899c);
   --hp-accent-soft: rgb(255 255 255 / 0.28);
   --hp-aura: rgb(255 255 255 / 0.05);
-  /* 어두운 헤더에서는 무늬가 배경 그 자체다. 더 넓게 편다 */
-  --hp-mask-a: 6%;
-  --hp-mask-b: 40%;
+  /* 무늬 가림 범위는 HeaderPattern.tsx 의 offset 에 직접 적는다 —
+     SVG offset 속성은 CSS 변수를 못 받는다. */
 }
 @media (min-width: 768px) {
   .hero { min-height: 68vh; padding-block: 9rem 5rem; }

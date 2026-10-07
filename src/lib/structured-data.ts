@@ -11,12 +11,12 @@ import type { SiteCopy } from "./site-content";
 
 /** "070-8875-5559" → "+82-70-8875-5559" (국제 표기) */
 function toE164ish(tel: string) {
-  const digits = tel.replace(/[^0-9]/g, "");
-  if (!digits) return "";
-  // 이미 국가번호가 붙어 있으면 그대로
-  if (tel.trim().startsWith("+")) return tel.trim();
-  const national = digits.startsWith("0") ? digits.slice(1) : digits;
-  return `+82-${national}`;
+  const t = tel.trim();
+  if (!t) return "";
+  if (t.startsWith("+")) return t; // 이미 국가번호가 붙어 있으면 그대로
+  // ⚠️ 숫자만 남기면 "+82-7088755559" 가 되어 구분이 사라진다.
+  //    앞의 0 만 국가번호로 바꾸고 나머지 표기는 그대로 둔다.
+  return t.startsWith("0") ? `+82-${t.slice(1)}` : `+82-${t}`;
 }
 
 /** "2010년 4월" → "2010-04" (schema.org 는 ISO 형식을 기대한다) */

@@ -38,9 +38,15 @@ export default function HeaderPattern({ pageId }: { pageId: HeaderPatternId }) {
       <defs>
         {/* 검정 = 가림, 흰색 = 보임. 왼쪽(제목 자리)을 지운다. */}
         <linearGradient id={gid} x1="0" y1="0" x2="1" y2="0">
+          {/*
+            ⚠️ offset 에는 CSS 변수(var())를 쓸 수 없다.
+               stop-color 와 달리 offset 은 CSS 속성이 아니라 SVG 속성이라
+               브라우저가 "Expected number or percentage" 오류를 내고 0 으로 떨어진다.
+               어두운 헤더에서는 무늬가 배경 그 자체이므로 넓게 편 값으로 고정한다.
+          */}
           <stop offset="0%" stopColor="#000000" />
-          <stop offset="var(--hp-mask-a, 42%)" stopColor="#000000" />
-          <stop offset="var(--hp-mask-b, 80%)" stopColor="#FFFFFF" />
+          <stop offset="6%" stopColor="#000000" />
+          <stop offset="40%" stopColor="#FFFFFF" />
           <stop offset="100%" stopColor="#FFFFFF" />
         </linearGradient>
         <mask id={mid}>
