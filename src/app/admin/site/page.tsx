@@ -27,7 +27,7 @@ type FormState = Record<(typeof FIELDS)[number]["name"], string>;
 const DEFAULTS: FormState = {
   companyName: "주식회사 토핑인터랙티브",
   shortName: "TOPPING",
-  founded: "2010년 4월",
+  founded: "2006년",
   ceo: "김원근",
   address: "경기도 성남시 분당구 서현로 170 풍림아이원플러스 D-1907",
   tel: "070-8875-5559",

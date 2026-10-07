@@ -29,7 +29,11 @@ export async function generateMetadata(): Promise<Metadata> {
     siteName: copy.companyName,
     title: m.title,
     description: m.description,
-    images: m.ogImage ? [m.ogImage] : undefined,
+    // 카톡·슬랙 링크 미리보기 그림.
+    // 관리자(검색엔진)에서 페이지별로 지정하면 그것을, 비우면 기본 그림을 쓴다.
+    // ⚠️ 하위 페이지가 openGraph 를 지정하면 이 블록 전체가 대체되므로,
+    //    각 페이지는 ogImage 가 있을 때만 openGraph 를 넘긴다.
+    images: [m.ogImage || "/og-default.png"],
   },
   // 파비콘·앱 아이콘. public/ 에 파일을 넣으면 바로 붙는다.
   icons: {

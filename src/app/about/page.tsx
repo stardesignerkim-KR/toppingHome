@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata(): Promise<Metadata> {
   const m = await getPageMeta("about", {
     title: "회사 소개",
-    description: "2010년 4월 설립. 업무시스템·AI 플랫폼 UIUX 전문 기업 주식회사 토핑인터랙티브.",
+    description: "2006년 설립. 업무시스템·AI 플랫폼 UIUX 전문 기업 주식회사 토핑인터랙티브.",
   });
   return {
     title: m.title,
@@ -28,13 +28,22 @@ export default async function AboutPage() {
     getList("service_fields"),
   ]);
 
+  // 연도를 직접 적으면 관리자에서 설립을 고쳐도 이 자리만 옛 값으로 남는다.
+  // 저장된 값("2006년", "2010년 4월" 등)에서 네 자리 연도만 뽑아 쓴다.
+  const foundedYear = copy.founded.match(/\d{4}/)?.[0];
+  const foundedLabel = foundedYear ? `${foundedYear}년 설립` : "설립";
+
   return (
     <>
       <PageHero
         eyebrow="About"
         pageId="about"
         header={header}
-        aside={[{ label: "2010년 설립" }, { label: "130여 건 수행", active: true }, { label: "AI 3개 기관" }]}
+        aside={[
+          { label: foundedLabel },
+          { label: "130여 건 수행", active: true },
+          { label: "AI 3개 기관" },
+        ]}
       >
         <p
           className="hero__sub text-lg"

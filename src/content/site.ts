@@ -4,7 +4,7 @@ export const SITE = {
   // 배포 환경에서는 Vercel 환경변수 NEXT_PUBLIC_SITE_URL 로 덮어쓴다
   url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
   description: "AI 업무지원시스템 UIUX. 업무시스템 UIUX 15년, 공공·금융 3개 기관 구축.",
-  founded: "2010년 4월",
+  founded: "2006년",
   ceo: "김원근",
   address: "경기도 성남시 분당구 서현로 170 풍림아이원플러스 D-1907",
   tel: "070-8875-5559",
